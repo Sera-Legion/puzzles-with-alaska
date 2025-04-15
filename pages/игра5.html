@@ -207,8 +207,21 @@
         .home-btn:hover {
             background: linear-gradient(135deg, #2980b9, #3498db);
         }
+        .ZV {
+            max-height: 25px;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.7);
 
-        @media (max-width: 600px) {
+        }
+
+        .ZV:last-child {
+            transform: scale(-1, 1);
+        }
+
+        @media (max-width: 500px) {
+
+            h1 {
+                font-size: medium;
+            }
             .game-container {
                 max-width: 100%;
                 padding: 10px;
@@ -237,7 +250,7 @@
 
     <!-- Игровой контейнер -->
     <div class="game-container">
-        <h1><span class="emoji">✨</span> Аляска на берегу <span class="emoji">✨</span></h1>
+        <h1><img class="ZV" src="../img/star.png">Пазл с Аляской<img class="ZV" src="../img/star.png"></h1>
         <div class="board" id="board"></div>
         <div class="stats">
             <div>ХОДЫ: <span id="moves">0</span></div>
