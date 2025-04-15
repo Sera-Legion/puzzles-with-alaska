@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Marck+Script&display=swap" rel="stylesheet">
+    <title>Пазлы с Аляской</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+            color: white;
+            font-family: "areal", cursive;
+            touch-action: manipulation;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Анимированные звёзды */
+        .stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle var(--duration) infinite ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 500px;
+            background: rgba(30, 30, 45, 0.8);
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            font-weight: 600;
+            letter-spacing: 1px;
+            font-family: "Marck Script", cursive;
+        }
+
+        .emoji {
+            color: white;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.7);
+            font-style: normal;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(6, 1fr);
+            gap: 2px;
+            aspect-ratio: 1/1;
+            width: 100%;
+            background: #111 url('2/22.png') center/cover;
+            padding: 5px;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.8);
+            position: relative;
+            overflow: hidden;
+            border: 2px solid #000;
+        }
+
+        .cell {
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            aspect-ratio: 1/1;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+            border: 1px solid #000;
+        }
+
+        .cell-cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #222;
+            transition: all 0.3s ease;
+            z-index: 3;
+            box-shadow:
+                inset 0 0 8px rgba(0, 0, 0, 0.9),
+                0 0 0 1px #000;
+        }
+
+        .cell-color {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1;
+            border: 1px solid rgba(0, 0, 0, 0.3);
+        }
+
+        .cell.hidden .cell-cover {
+            transform: none;
+            opacity: 1;
+        }
+
+        .cell.revealed .cell-cover {
+            transform: rotateY(90deg);
+            opacity: 0;
+        }
+
+        .cell:active {
+            transform: scale(0.96);
+        }
+
+        .matched {
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+            font-size: 16px;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .stats div {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 8px 12px;
+            border-radius: 18px;
+            min-width: 90px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 15px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .buttons-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .game-btn {
+            padding: 10px;
+            color: white;
+            border: none;
+            border-radius: 22px;
+            cursor: pointer;
+            font-size: 15px;
+            width: 100%;
+            transition: all 0.3s;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: bold;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            text-align: center;
+            text-decoration: none;
+            display: block;
+        }
+
+        .restart-btn {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+        }
+
+        .home-btn {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+        }
+
+        .restart-btn:hover {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+        }
+
+        .home-btn:hover {
+            background: linear-gradient(135deg, #2980b9, #3498db);
+        }
+
+        @media (max-width: 500px) {
+            .game-container {
+                max-width: 100%;
+                padding: 10px;
+            }
+
+            .stats {
+                font-size: 14px;
+            }
+
+            .stats div {
+                min-width: 80px;
+                padding: 6px 8px;
+                font-size: 14px;
+            }
+
+            .game-btn {
+                padding: 8px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Звёздный фон -->
+    <div class="stars" id="stars"></div>
+
+    <!-- Игровой контейнер -->
+    <div class="game-container">
+        <h1><span class="emoji">✨</span> Аляска на берегу <span class="emoji">✨</span></h1>
+        <div class="board" id="board"></div>
+        <div class="stats">
+            <div>ХОДЫ: <span id="moves">0</span></div>
+            <div>НАЙДЕНО: <span id="pairs">0</span>/18</div>
+        </div>
+        <div class="buttons-container">
+            <button class="game-btn restart-btn" id="restartBtn">НОВАЯ ИГРА</button>
+            <a href="index.html" class="game-btn home-btn">НА ГЛАВНУЮ</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Создаём звёзды для фона
+            const starsContainer = document.getElementById('stars');
+            for (let i = 0; i < 250; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+
+                const size = Math.random() * 2;
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+                const duration = 2 + Math.random() * 5;
+
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${x}%`;
+                star.style.top = `${y}%`;
+                star.style.setProperty('--duration', `${duration}s`);
+
+                starsContainer.appendChild(star);
+            }
+
+            // Остальной JavaScript код остаётся без изменений
+            const colorPalette = [
+                '#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF',
+                '#00FFFF', '#FF8000', '#8000FF', '#FF0080', '#00FF80',
+                '#0080FF', '#80FF00', '#FF6347', '#7FFFD4', '#9370DB',
+                '#FFD700', '#32CD32', '#BA55D3', '#F08080', '#20B2AA',
+                '#DAA520', '#ADFF2F', '#FF69B4', '#4169E1', '#FF4500',
+                '#9400D3', '#00FA9A', '#FF1493', '#1E90FF', '#FF8C00',
+                '#9932CC', '#00CED1', '#FF00FF', '#3CB371', '#FF4500'
+            ];
+
+            const boardElement = document.getElementById('board');
+            const movesElement = document.getElementById('moves');
+            const pairsElement = document.getElementById('pairs');
+            const restartBtn = document.getElementById('restartBtn');
+
+            let board = [];
+            let firstCell = null;
+            let secondCell = null;
+            let moves = 0;
+            let matchedPairs = 0;
+            let isProcessing = false;
+            const totalPairs = 18;
+
+            function initGame() {
+                boardElement.innerHTML = '';
+                board = [];
+                firstCell = null;
+                secondCell = null;
+                moves = 0;
+                matchedPairs = 0;
+                movesElement.textContent = moves;
+                pairsElement.textContent = `${matchedPairs}/${totalPairs}`;
+                isProcessing = false;
+
+                const colors = getRandomColors();
+                const shuffledColors = distributeColors(colors);
+
+                for (let i = 0; i < 36; i++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell hidden';
+                    cell.dataset.index = i;
+
+                    const colorDiv = document.createElement('div');
+                    colorDiv.className = 'cell-color';
+                    colorDiv.style.backgroundColor = shuffledColors[i];
+
+                    const coverDiv = document.createElement('div');
+                    coverDiv.className = 'cell-cover';
+
+                    cell.appendChild(colorDiv);
+                    cell.appendChild(coverDiv);
+                    cell.dataset.color = shuffledColors[i];
+
+                    cell.addEventListener('click', handleCellClick);
+
+                    board.push(cell);
+                    boardElement.appendChild(cell);
+                }
+            }
+
+            function getRandomColors() {
+                const shuffled = [...colorPalette].sort(() => Math.random() - 0.5);
+                const selected = [];
+                const similarityThreshold = 150;
+
+                for (const color of shuffled) {
+                    if (selected.length >= 18) break;
+
+                    const isDistinct = selected.every(selectedColor =>
+                        colorDistance(selectedColor, color) > similarityThreshold);
+
+                    if (isDistinct || selected.length === 0) {
+                        selected.push(color);
+                    }
+                }
+
+                while (selected.length < 18) {
+                    const remaining = shuffled.filter(c => !selected.includes(c));
+                    if (remaining.length > 0) {
+                        selected.push(remaining[0]);
+                    } else {
+                        selected.push(getRandomHexColor());
+                    }
+                }
+
+                return selected;
+            }
+
+            function getRandomHexColor() {
+                return '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+            }
+
+            function colorDistance(color1, color2) {
+                const r1 = parseInt(color1.substr(1, 2), 16);
+                const g1 = parseInt(color1.substr(3, 2), 16);
+                const b1 = parseInt(color1.substr(5, 2), 16);
+
+                const r2 = parseInt(color2.substr(1, 2), 16);
+                const g2 = parseInt(color2.substr(3, 2), 16);
+                const b2 = parseInt(color2.substr(5, 2), 16);
+
+                return Math.sqrt(
+                    Math.pow(r1 - r2, 2) +
+                    Math.pow(g1 - g2, 2) +
+                    Math.pow(b1 - b2, 2)
+                );
+            }
+
+            function distributeColors(colors) {
+                const colorPairs = [...colors, ...colors];
+
+                for (let i = colorPairs.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [colorPairs[i], colorPairs[j]] = [colorPairs[j], colorPairs[i]];
+                }
+
+                let attempts = 0;
+                const maxAttempts = 150;
+
+                while (attempts < maxAttempts) {
+                    let hasClosePairs = false;
+
+                    for (let i = 0; i < colorPairs.length - 1; i++) {
+                        if (i % 6 !== 5 && colorPairs[i] === colorPairs[i + 1]) {
+                            hasClosePairs = true;
+                            break;
+                        }
+                        if (i < 30 && colorPairs[i] === colorPairs[i + 6]) {
+                            hasClosePairs = true;
+                            break;
+                        }
+                    }
+
+                    if (!hasClosePairs) break;
+
+                    for (let i = colorPairs.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [colorPairs[i], colorPairs[j]] = [colorPairs[j], colorPairs[i]];
+                    }
+
+                    attempts++;
+                }
+
+                return colorPairs;
+            }
+
+            function handleCellClick(e) {
+                const cell = e.currentTarget;
+
+                if (!cell.classList.contains('hidden') || isProcessing || cell === firstCell) {
+                    return;
+                }
+
+                cell.classList.remove('hidden');
+                cell.classList.add('revealed');
+
+                if (!firstCell) {
+                    firstCell = cell;
+                } else {
+                    secondCell = cell;
+                    moves++;
+                    movesElement.textContent = moves;
+                    isProcessing = true;
+                    checkMatch();
+                }
+            }
+
+            function checkMatch() {
+                const isMatch = firstCell.dataset.color === secondCell.dataset.color;
+
+                if (isMatch) {
+                    matchedPairs++;
+                    pairsElement.textContent = `${matchedPairs}/${totalPairs}`;
+
+                    setTimeout(() => {
+                        firstCell.classList.add('matched');
+                        secondCell.classList.add('matched');
+                        resetSelection();
+
+                        if (matchedPairs === totalPairs) {
+                            setTimeout(() => {
+                                showWinMessage();
+                            }, 300);
+                        }
+                    }, 500);
+                } else {
+                    setTimeout(() => {
+                        firstCell.classList.remove('revealed');
+                        firstCell.classList.add('hidden');
+                        secondCell.classList.remove('revealed');
+                        secondCell.classList.add('hidden');
+                        resetSelection();
+                    }, 1000);
+                }
+            }
+
+            function showWinMessage() {
+                const winMessage = document.createElement('div');
+                winMessage.style.position = 'fixed';
+                winMessage.style.top = '50%';
+                winMessage.style.left = '50%';
+                winMessage.style.transform = 'translate(-50%, -50%)';
+                winMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.95)';
+                winMessage.style.color = 'white';
+                winMessage.style.padding = '20px';
+                winMessage.style.borderRadius = '10px';
+                winMessage.style.textAlign = 'center';
+                winMessage.style.zIndex = '1000';
+                winMessage.style.boxShadow = '0 0 25px rgba(255, 255, 255, 0.4)';
+                winMessage.style.border = '2px solid rgba(255, 255, 255, 0.3)';
+                winMessage.style.width = '90%';
+                winMessage.style.maxWidth = '350px';
+                winMessage.innerHTML = `
+                    <h2 style="margin-bottom: 15px; color: #2ecc71; font-size: 24px;">ПОБЕДА!</h2>
+                    <p style="margin-bottom: 10px; font-size: 18px;">Вы нашли все пары за ${moves} ходов!</p>
+                    <p style="margin-bottom: 20px; font-size: 16px; color: #f1c40f;">Наслаждайтесь картинкой!</p>
+                    <button id="closeWinMessage" style="
+                        background: linear-gradient(135deg, #2ecc71, #27ae60);
+                        color: white;
+                        border: none;
+                        padding: 12px 24px;
+                        border-radius: 25px;
+                        cursor: pointer;
+                        font-size: 16px;
+                        margin-top: 15px;
+                        font-weight: bold;
+                        letter-spacing: 1px;
+                    ">OK</button>
+                `;
+
+                document.body.appendChild(winMessage);
+
+                document.getElementById('closeWinMessage').addEventListener('click', function() {
+                    document.body.removeChild(winMessage);
+                });
+            }
+
+            function resetSelection() {
+                firstCell = null;
+                secondCell = null;
+                isProcessing = false;
+            }
+
+            initGame();
+            restartBtn.addEventListener('click', initGame);
+        });
+    </script>
+</body>
+</html>
