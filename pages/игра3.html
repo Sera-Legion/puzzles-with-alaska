@@ -6,6 +6,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Marck+Script&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/p.css">
     <title>Пазлы с Аляской</title>
     <style>
         * {
@@ -252,6 +253,8 @@
                 }
         }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
 </head>
 <body>
     <!-- Звёздный фон -->
@@ -270,7 +273,54 @@
             <a href="../index.html" class="game-btn home-btn">НА ГЛАВНУЮ</a>
         </div>
     </div>
-
+ <!-- Геймерский аудиоплеер -->
+        <div class="audio-toggle" id="audioToggle">
+            <i class="fas fa-headphones"></i>
+        </div>
+    
+        <div class="audio-panel" id="audioPanel">
+            <div class="panel-header">
+                <div class="panel-title">MUSIC PLAYER</div>
+                <button class="close-btn" id="closePanel">&times;</button>
+            </div>
+    
+            <div class="track-info">
+                <div class="track-name" id="trackName">Cosmic Journey</div>
+                <div class="track-artist" id="trackArtist">Space Sounds</div>
+            </div>
+    
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+    
+            <div class="time-display">
+                <span id="currentTime">0:00</span>
+                <span id="duration">0:00</span>
+            </div>
+    
+            <div class="controls">
+                <button class="control-btn" id="prevBtn" title="Previous"><i class="fas fa-step-backward"></i></button>
+                <button class="control-btn" id="rewindBtn" title="Rewind 10s"><i class="fas fa-backward"></i></button>
+                <button class="control-btn play-btn" id="playBtn" title="Play/Pause"><i class="fas fa-play"></i></button>
+                <button class="control-btn" id="forwardBtn" title="Forward 10s"><i class="fas fa-forward"></i></button>
+                <button class="control-btn" id="nextBtn" title="Next"><i class="fas fa-step-forward"></i></button>
+            </div>
+    
+            <div class="volume-control">
+                <i class="fas fa-volume-up volume-icon"></i>
+                <input type="range" min="0" max="1" step="0.01" value="0.5" class="volume-slider" id="volumeSlider">
+                <i class="fas fa-volume-mute mute-btn" id="muteBtn"></i>
+            </div>
+    
+            <div class="playlist" id="playlist">
+                <div class="playlist-item active" data-src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3">Cosmic Journey</div>
+                <div class="playlist-item" data-src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3">Stellar Dreams</div>
+                <div class="playlist-item" data-src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3">Galactic Waves</div>
+                <div class="playlist-item" data-src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3">Nebula Dance</div>
+                <div class="playlist-item" data-src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3">Orbit Melody</div>
+            </div>
+    
+            <audio id="audio"></audio>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Создаём звёзды для фона
@@ -541,5 +591,6 @@
             restartBtn.addEventListener('click', initGame);
         });
     </script>
+    <script src="../js/js.js"></script>
 </body>
 </html>
