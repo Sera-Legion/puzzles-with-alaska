@@ -24,11 +24,10 @@ let currentTrack = 0;
 
 // Плейлист
 const tracks = [
-    { name: "Cosmic Journey", artist: "Space Sounds", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
-    { name: "Stellar Dreams", artist: "Galaxy Beats", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
-    { name: "Galactic Waves", artist: "Nebula Mix", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" },
-    { name: "Nebula Dance", artist: "Cosmic DJ", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" },
-    { name: "Orbit Melody", artist: "Space Station", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3" }
+    { name: "Outside", artist: "Oneheart", src: "../music/outside.mp3" },
+    { name: "Leaving", artist: "Oneheart", src: "../music/leaving.mp3" },
+    { name: "Snowfall", artist: "Oneheart", src: "../music/snegpadaet.mp3" },
+    { name: "HeartBrake", artist: "Oneheart", src: "../music/hertbrak.mp3" }
 ];
 
 // Инициализация плеера
