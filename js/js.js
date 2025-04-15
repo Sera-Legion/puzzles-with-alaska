@@ -27,7 +27,9 @@ const tracks = [
     { name: "Outside", artist: "Oneheart", src: "../music/outside.mp3" },
     { name: "Leaving", artist: "Oneheart", src: "../music/leaving.mp3" },
     { name: "Snowfall", artist: "Oneheart", src: "../music/snegpadaet.mp3" },
-    { name: "HeartBrake", artist: "Oneheart", src: "../music/hertbrak.mp3" }
+    { name: "HeartBrake", artist: "Oneheart", src: "../music/hertbrak.mp3" },
+    { name: "Cosmic dreams", artist: "-", src: "../music/cosmicdreams.mp3" },
+    { name: "Midnight shadows", artist: "-", src: "../music/midnightshadows.mp3" }
 ];
 
 // Инициализация плеера
